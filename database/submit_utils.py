@@ -59,3 +59,39 @@ def submit_data():
         # Release the connection back to the pool
         cursor.close()
         connection.close()
+
+@app.route('/print_table', methods=['GET'])
+def print_table():
+    # Get a connection from the pool
+    connection = connection_pool.get_connection()
+    cursor = connection.cursor()
+
+    try:
+        # Fetch all rows from the `isms` table
+        select_query = "SELECT * FROM isms"
+        cursor.execute(select_query)
+        rows = cursor.fetchall()
+
+        # Convert rows to a list of dictionaries
+        result = []
+        for row in rows:
+            result.append({
+                'id': row[0],
+                'word': row[1],
+                'case': row[2],
+                'heaviness': row[3],
+                'flexibility': row[4],
+                'number': row[5],
+                'gender': row[6],
+                'type': row[7]
+            })
+
+        return jsonify(result), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+
+    finally:
+        # Release the connection back to the pool
+        cursor.close()
+        connection.close()

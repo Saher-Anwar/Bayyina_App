@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: quran_info
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin5683!
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+      
+  flask:
+    build: ./database
+    container_name: submit_utils
+    depends_on:
+      - mysql
+    ports:
+      - "5000:5000"
