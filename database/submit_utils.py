@@ -89,7 +89,7 @@ def delete_row():
 
     try:
         # Get the word from the request
-        word = request.args.get('word')
+        word = request.json.get('word')
 
         # Delete the row with the specified word from the `isms` table
         delete_query = "DELETE FROM isms WHERE word = %s"
@@ -143,3 +143,7 @@ def print_table():
         # Release the connection back to the pool
         cursor.close()
         connection.close()
+
+@app.route('/test', methods=['GET'])
+def test():
+    return jsonify({'message': 'Test endpoint is working'}), 200

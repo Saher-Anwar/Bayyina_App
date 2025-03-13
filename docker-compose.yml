@@ -20,3 +20,5 @@ services:
       - mysql
     ports:
       - "5000:5000"
+    volumes:
+      - ./database/submit_utils.py:/app/submit_utils.py

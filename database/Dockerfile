@@ -4,7 +4,9 @@ FROM python:latest
 WORKDIR /app
 
 # Copy the current directory contents into the container
-COPY . .
+COPY requirements.txt .
+COPY wait-for-it.sh .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 # set env variables
@@ -15,4 +17,4 @@ ENV DATABASE_HOST=mysql-container
 EXPOSE 5000
 
 # Run the Flask app
-CMD ["./wait-for-it.sh", "mysql:3306", "--", "flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["./wait-for-it.sh", "mysql:3306", "--", "flask", "--debug", "run", "--host=0.0.0.0", "--port=5000"]
