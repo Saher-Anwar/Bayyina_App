@@ -1,13 +1,14 @@
 import requests
 import re
 from bs4 import BeautifulSoup
+from collections import defaultdict
 
 chapter = 114
 verse = 1
 
 url = f"https://corpus.quran.com/wordbyword.jsp?chapter={chapter}&verse={verse}"
 response = requests.get(url)
-res = {}
+res = defaultdict(defaultdict)
 
 if response.status_code == 200:
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -24,19 +25,17 @@ if response.status_code == 200:
             if not location:
                 continue
 
-            # Extract <b> from third cell
-            bold = cells[2].find("b")
-            pos = bold.getText(strip=True)
-
-            # Extract actual information
-            info = "" if not bold else bold.find_next_sibling(string=True)
-
             # Extract number
             numbers = re.findall(r"\d+", location)
             numbers = tuple([int(num) for num in numbers])
 
-            res[numbers] = f"{pos} => {info}"
+            # Extract all <b> from third cell
+            for b in cells[2].find_all('b'):
+                res[numbers][b.getText(strip=True)] = b.find_next_sibling(string=True)
+
 else:
     print("Failed to retrieve the webpage")
 
-print("\n".join([f"{key}: {value}" for key, value in res.items()]))
+for numbers, data in res.items():
+    for word, meaning in data.items():
+        print(f"Location: {numbers} -> Word: {word} -> Meaning: {meaning}")
