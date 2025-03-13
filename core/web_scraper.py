@@ -7,7 +7,7 @@ chapter = 114
 verse = 1
 
 def combine():
-    morphology = get_morphology()
+    morphology = get_isms()
     surah = get_surah()
 
     for key,value in morphology.items():
@@ -49,6 +49,44 @@ def get_morphology():
     
     return res
 
+def get_isms():
+    url = f"https://corpus.quran.com/wordbyword.jsp?chapter={chapter}&verse={verse}"
+    response = requests.get(url)
+    
+    res = defaultdict(defaultdict)
+    isms_tags = ["N", "PN", "ADJ", "IMPN"]
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        table = soup.find('table', class_='morphologyTable')
+        rows = table.find_all('tr')
+
+        for row in rows:
+            cells = row.find_all('td')
+            if len(cells) >= 3:
+                # Extract location
+                span = cells[0].find('span', class_='location')
+                location = span.getText(strip=True) if span else None
+
+                if not location:
+                    continue
+
+                # Extract number
+                numbers = re.findall(r"\d+", location)
+                numbers = tuple([int(num) for num in numbers])
+
+                # Extract all <b> from third cell
+                for b in cells[2].find_all('b'):
+                    tag = b.getText(strip=True)
+                    if tag not in isms_tags:
+                        continue
+                    res[numbers][tag] = b.find_next_sibling(string=True)
+
+    else:
+        print("Failed to retrieve the webpage")
+    
+    return res
+
 def get_surah():
     api_endpoint = f"https://quranapi.pages.dev/api/{chapter}.json"
     response = requests.get(api_endpoint)
@@ -61,7 +99,6 @@ def get_surah():
             for j, word in enumerate(ayah.split()):
                 res[(chapter, i+1, j+1)] = word  
 
-        print("\n".join(f"{key}: {value}" for key, value in res.items()))
     else:
         print("Failed to retrieve the webpage")
     
