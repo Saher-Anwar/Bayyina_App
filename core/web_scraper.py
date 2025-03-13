@@ -6,36 +6,71 @@ from collections import defaultdict
 chapter = 114
 verse = 1
 
-url = f"https://corpus.quran.com/wordbyword.jsp?chapter={chapter}&verse={verse}"
-response = requests.get(url)
-res = defaultdict(defaultdict)
+def combine():
+    morphology = get_morphology()
+    surah = get_surah()
 
-if response.status_code == 200:
-    soup = BeautifulSoup(response.text, 'html.parser')
-    table = soup.find('table', class_='morphologyTable')
-    rows = table.find_all('tr')
+    for key,value in morphology.items():
+        if key in surah:
+            morphology[key]['word'] = surah[key]
+    
+    output(morphology)
 
-    for row in rows:
-        cells = row.find_all('td')
-        if len(cells) >= 3:
-            # Extract location
-            span = cells[0].find('span', class_='location')
-            location = span.getText(strip=True) if span else None
+def get_morphology():
+    url = f"https://corpus.quran.com/wordbyword.jsp?chapter={chapter}&verse={verse}"
+    response = requests.get(url)
+    res = defaultdict(defaultdict)
 
-            if not location:
-                continue
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        table = soup.find('table', class_='morphologyTable')
+        rows = table.find_all('tr')
 
-            # Extract number
-            numbers = re.findall(r"\d+", location)
-            numbers = tuple([int(num) for num in numbers])
+        for row in rows:
+            cells = row.find_all('td')
+            if len(cells) >= 3:
+                # Extract location
+                span = cells[0].find('span', class_='location')
+                location = span.getText(strip=True) if span else None
 
-            # Extract all <b> from third cell
-            for b in cells[2].find_all('b'):
-                res[numbers][b.getText(strip=True)] = b.find_next_sibling(string=True)
+                if not location:
+                    continue
 
-else:
-    print("Failed to retrieve the webpage")
+                # Extract number
+                numbers = re.findall(r"\d+", location)
+                numbers = tuple([int(num) for num in numbers])
 
-for numbers, data in res.items():
-    for word, meaning in data.items():
-        print(f"Location: {numbers} -> Word: {word} -> Meaning: {meaning}")
+                # Extract all <b> from third cell
+                for b in cells[2].find_all('b'):
+                    res[numbers][b.getText(strip=True)] = b.find_next_sibling(string=True)
+
+    else:
+        print("Failed to retrieve the webpage")
+    
+    return res
+
+def get_surah():
+    api_endpoint = f"https://quranapi.pages.dev/api/{chapter}.json"
+    response = requests.get(api_endpoint)
+    res = {}
+
+    if response.status_code == 200:
+        ayahs = response.json()['arabic1']
+
+        for i, ayah in enumerate(ayahs):
+            for j, word in enumerate(ayah.split()):
+                res[(chapter, i+1, j+1)] = word  
+
+        print("\n".join(f"{key}: {value}" for key, value in res.items()))
+    else:
+        print("Failed to retrieve the webpage")
+    
+    return res
+
+def output(res):
+    for numbers, data in res.items():
+        for word, meaning in data.items():
+            print(f"Location: {numbers} -> Word: {word} -> Meaning: {meaning}")
+
+combine()
+# N, PN, ADJ, IMPN
