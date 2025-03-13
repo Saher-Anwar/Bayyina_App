@@ -60,6 +60,55 @@ def submit_data():
         cursor.close()
         connection.close()
 
+@app.route('/delete_all', methods=['DELETE'])
+def delete_all_data():
+    # Get a connection from the pool
+    connection = connection_pool.get_connection()
+    cursor = connection.cursor()
+
+    try:
+        # Delete all rows from the `isms` table
+        delete_query = "DELETE FROM isms"
+        cursor.execute(delete_query)
+        connection.commit()
+        return jsonify({'message': 'All data deleted successfully'}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+
+    finally:
+        # Release the connection back to the pool
+        cursor.close()
+        connection.close()
+
+@app.route('/delete_row', methods=['DELETE'])
+def delete_row():
+    # Get a connection from the pool
+    connection = connection_pool.get_connection()
+    cursor = connection.cursor()
+
+    try:
+        # Get the word from the request
+        word = request.args.get('word')
+
+        # Delete the row with the specified word from the `isms` table
+        delete_query = "DELETE FROM isms WHERE word = %s"
+        cursor.execute(delete_query, (word,))
+        connection.commit()
+
+        if cursor.rowcount > 0:
+            return jsonify({'message': f'Row with word "{word}" deleted successfully'}), 200
+        else:
+            return jsonify({'message': f'No row found with word "{word}"'}), 404
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+
+    finally:
+        # Release the connection back to the pool
+        cursor.close()
+        connection.close()
+
 @app.route('/print_table', methods=['GET'])
 def print_table():
     # Get a connection from the pool
@@ -76,14 +125,13 @@ def print_table():
         result = []
         for row in rows:
             result.append({
-                'id': row[0],
-                'word': row[1],
-                'case': row[2],
-                'heaviness': row[3],
-                'flexibility': row[4],
-                'number': row[5],
-                'gender': row[6],
-                'type': row[7]
+                'word': row[0],
+                'case': row[1],
+                'heaviness': row[2],
+                'flexibility': row[3],
+                'number': row[4],
+                'gender': row[5],
+                'type': row[6]
             })
 
         return jsonify(result), 200
