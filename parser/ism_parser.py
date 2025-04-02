@@ -10,7 +10,7 @@ def parse_line(line):
     """
     return line.split()  
 
-def parse_location(location):
+def extract_location(location):
     """
     Parses a location string into a list of integers.
 
@@ -22,17 +22,16 @@ def parse_location(location):
     """
     return [int(x) for x in location.split(":")]
 
-def is_ism(segment):
+def is_ism(tag_segment, desc_segment):
     """
     Checks if the word is an ism (interrogative pronoun).
 
     Returns:
         bool: True if the word is an ism, False otherwise.
     """
+    return False if "ROOT" not in desc_segment or tag_segment != "N" else True
 
-    return True if "ROOT" in segment else False
-
-def segment_desciption(description):
+def extract_description(description):
     """
     Segments a description string into a list of strings using \'|\' as the splitter.
 
@@ -41,10 +40,11 @@ def segment_desciption(description):
 
     Returns:
         list: A list of strings representing the description.
-    """
+    """       
+
     return description.split("|")
 
-def parse_segment(segments : list[str]):
+def parse_description(segments : list[str]):
     """
     Iterates over each segment and parses it accordingly.
 
@@ -63,11 +63,16 @@ def parse_segment(segments : list[str]):
             res["lemma"] = segment.split(":")[1]
         elif segment in cases:
             res["case"] = segment
+        elif "INDEF" in segment:
+            res["type"] = "common"
         else:
-            # parse to extract gender, number, and type
-            res["gender"], res["number"] = extract_gender_number(segment)
-            res["type"] = extract_specificity(segment)
-            
+            temp = extract_gender_number(segment)
+            if temp:
+                res["gender"], res["number"] = temp
+    
+    if "type" not in res:
+        res["type"] = "proper"
+
     return res
 
 def extract_gender_number(segment):
@@ -85,30 +90,19 @@ def extract_gender_number(segment):
         if gen_num in segment:
             return (gen_num, "S") if len(gen_num) == 1 else (gen_num[0], gen_num[-1])
     
-    print("Gender and Number not found")
-
-def extract_specificity(segment):
-    """
-    Extracts the specificity from a segment string by checking if \'INDEF \' tag exists in the segment.
-    If it does, that means the word is common. Otherwise, it's proper. 
-
-    Note:
-        \'INDEF\' is the only tag that exists to specify the specificity.
-
-    Args:
-        segment (str): The segment string to be parsed.
-
-    Returns:
-        str: The specificity extracted from the segment.
-    """
-    return "common" if "INDEF" in segment else "proper"
+    return None
 
 def start_parser():
-    sample_text = "55:29:10:1	شَأْنٍ	N	ROOT:شأن|LEM:شَأْن|M|INDEF|GEN"
+    sample_text = "74:53:3:1	لَّا	P	NEG|LEM:لا"
     parsed_line = parse_line(sample_text)
-    location = parse_location(parsed_line[0])
-    description = segment_desciption(parsed_line[3])
-    ism = parse_segment(description)
+
+    if not is_ism(parsed_line[2], parsed_line[3]):
+        print("Not an ism")
+        return
+    
+    location = extract_location(parsed_line[0])
+    description = extract_description(parsed_line[3])
+    ism = parse_description(description)
 
     print(ism)
 
