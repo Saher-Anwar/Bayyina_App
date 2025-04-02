@@ -30,3 +30,11 @@ CREATE TABLE corpus_isms(
 
 ALTER TABLE corpus_isms MODIFY COLUMN `number` ENUM('S', 'D', 'P') NOT NULL;
 ALTER TABLE corpus_isms MODIFY COLUMN `status` ENUM('NOM', 'ACC', 'GEN') NOT NULL;
+
+SHOW databases;
+SHOW TABLES;
+
+GRANT ALL PRIVILEGES ON corpus_isms.* TO 'admin'@'%' IDENTIFIED BY 'admin5683!';
+FLUSH PRIVILEGES;
+
+select * from corpus_isms;

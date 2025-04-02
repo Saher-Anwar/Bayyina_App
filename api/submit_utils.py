@@ -16,44 +16,70 @@ db_config = {
     'collation': 'utf8mb4_unicode_ci'  # Collation for Arabic support
 }
 
+settings = {
+    'table_name': 'corpus_isms',
+}
+
 # Create a connection pool
 connection_pool = mysql.connector.pooling.MySQLConnectionPool(**db_config)
 
-# Endpoint to submit data to the `isms` table
 @app.route('/submit', methods=['POST'])
 def submit_data():
     # Get JSON data from the request
     data = request.json
 
     # Validate required fields
-    required_fields = ['word', 'case', 'heaviness', 'flexibility', 'number', 'gender', 'type']
+    required_fields = ['chapter', 'verse', 'character', 'token', 'word', 'tag', 'status', 'gender', 'number', 'type', 'root', 'lem']
     if not all(field in data for field in required_fields):
         return jsonify({'error': 'Missing required fields'}), 400
+
+    # Validate data types
+    if not isinstance(data['chapter'], int) or not isinstance(data['verse'], int) or not isinstance(data['token'], int):
+        return jsonify({'error': 'Fields chapter, verse, and token must be integers'}), 400
 
     # Get a connection from the pool
     connection = connection_pool.get_connection()
     cursor = connection.cursor()
 
     try:
-        # Insert data into the `isms` table
-        insert_query = """
-        INSERT INTO isms (word, `case`, heaviness, flexibility, `number`, gender, `type`)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        # Insert data into the `isms` table, handle optional fields
+        insert_query = f"""
+        INSERT INTO {settings['table_name']} (
+            chapter, verse, `character`, token, word, tag, `status`, gender, `number`, `type`, root, lem, heaviness, flexibility
+        ) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
+        
+        # Set `heaviness` and `flexibility` to NULL if not provided in data
+        heaviness = data.get('heaviness', None)
+        flexibility = data.get('flexibility', None)
+
         cursor.execute(insert_query, (
+            data['chapter'],
+            data['verse'],
+            data['character'],
+            data['token'],
             data['word'],
-            data['case'],
-            data['heaviness'],
-            data['flexibility'],
-            data['number'],
+            data['tag'],
+            data['status'],
             data['gender'],
-            data['type']
+            data['number'],
+            data['type'],
+            data['root'],
+            data['lem'],
+            heaviness,
+            flexibility
         ))
+        
         connection.commit()
         return jsonify({'message': 'Data inserted successfully'}), 201
 
     except mysql.connector.Error as err:
         return jsonify({'error': str(err)}), 500
+
+    except Exception as e:
+        # Catch any other exceptions and log them
+        return jsonify({'error': str(e)}), 500
 
     finally:
         # Release the connection back to the pool
@@ -68,7 +94,7 @@ def delete_all_data():
 
     try:
         # Delete all rows from the `isms` table
-        delete_query = "DELETE FROM isms"
+        delete_query = f"DELETE FROM {settings['table_name']}"
         cursor.execute(delete_query)
         connection.commit()
         return jsonify({'message': 'All data deleted successfully'}), 200
@@ -117,7 +143,7 @@ def print_table():
 
     try:
         # Fetch all rows from the `isms` table
-        select_query = "SELECT * FROM isms"
+        select_query = f"SELECT * FROM {settings['table_name']}"
         cursor.execute(select_query)
         rows = cursor.fetchall()
 
@@ -125,13 +151,20 @@ def print_table():
         result = []
         for row in rows:
             result.append({
-                'word': row[0],
-                'case': row[1],
-                'heaviness': row[2],
-                'flexibility': row[3],
-                'number': row[4],
-                'gender': row[5],
-                'type': row[6]
+                'chapter': row[0],
+                'verse': row[1],
+                'character': row[2],
+                'token': row[3],
+                'word': row[4],
+                'tag': row[5],
+                'status': row[6],
+                'gender': row[7],
+                'number': row[8],
+                'type': row[9],
+                'heaviness': row[10],
+                'flexibility': row[11],
+                'root': row[12],
+                'lem': row[13]
             })
 
         return jsonify(result), 200
