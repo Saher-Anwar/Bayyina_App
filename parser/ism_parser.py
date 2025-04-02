@@ -10,7 +10,7 @@ def parse_line(line):
     """
     parsed_line = line.split()
 
-    if not is_ism(parsed_line[2], parsed_line[3]):
+    if not parsed_line or not is_ism(parsed_line[2], parsed_line[3]):
         print("Not an ism")
         return None
 
