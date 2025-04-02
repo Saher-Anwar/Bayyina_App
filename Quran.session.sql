@@ -27,3 +27,6 @@ CREATE TABLE corpus_isms(
     lem VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     PRIMARY KEY(chapter, verse, `character`)
 );
+
+ALTER TABLE corpus_isms MODIFY COLUMN `number` ENUM('S', 'D', 'P') NOT NULL;
+ALTER TABLE corpus_isms MODIFY COLUMN `status` ENUM('NOM', 'ACC', 'GEN') NOT NULL;
