@@ -44,3 +44,4 @@ public_key.pem
 \#ib_*
 
 mysql-data
+mysql-data/quran_info/isms.ibd
