@@ -14,11 +14,11 @@ services:
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
       
   flask:
-    build: ./database
+    build: ./api
     container_name: submit_utils
     depends_on:
       - mysql
     ports:
       - "5000:5000"
     volumes:
-      - ./database/submit_utils.py:/app/submit_utils.py
+      - ./api/submit_utils.py:/app/submit_utils.py
