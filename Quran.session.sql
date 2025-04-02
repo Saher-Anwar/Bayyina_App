@@ -30,11 +30,10 @@ CREATE TABLE corpus_isms(
 
 ALTER TABLE corpus_isms MODIFY COLUMN `number` ENUM('S', 'D', 'P') NOT NULL;
 ALTER TABLE corpus_isms MODIFY COLUMN `status` ENUM('NOM', 'ACC', 'GEN') NOT NULL;
+ALTER TABLE corpus_isms MODIFY COLUMN `gender` ENUM('M', 'F') NOT NULL;
+ALTER TABLE corpus_isms
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (chapter, verse, `character`, token);
 
-SHOW databases;
-SHOW TABLES;
-
-GRANT ALL PRIVILEGES ON corpus_isms.* TO 'admin'@'%' IDENTIFIED BY 'admin5683!';
-FLUSH PRIVILEGES;
-
-select * from corpus_isms;
+select * from corpus_isms;;
+SELECT COUNT(*) FROM corpus_isms;
