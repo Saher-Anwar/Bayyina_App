@@ -8,4 +8,22 @@ CREATE TABLE isms (
     `type` ENUM('proper', 'common') NOT NULL
 );
 
-select * from isms;
+drop table isms;
+
+CREATE TABLE corpus_isms(
+    chapter INT NOT NULL,
+    verse INT NOT NULL,
+    `character` INT NOT NULL,
+    token INT NOT NULL,
+    word VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+    tag VARCHAR(255) NOT NULL,
+    `status` ENUM('nominative', 'accusative', 'genitive') NOT NULL,
+    gender ENUM('m', 'f') NOT NULL,
+    `number` ENUM('singular', 'pair', 'plural') NOT NULL,
+    `type` ENUM('proper', 'common') NOT NULL,
+    heaviness ENUM('light', 'heavy'),
+    flexibility ENUM('flexible', 'partial', 'non-flexible'),
+    `root` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+    lem VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+    PRIMARY KEY(chapter, verse, `character`)
+);
