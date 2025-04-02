@@ -1,3 +1,5 @@
+import requests
+
 def parse_line(line):
     """
     Parses a line of text into a list of words.
@@ -10,17 +12,18 @@ def parse_line(line):
     """
     parsed_line = line.split()
     if len(parsed_line) < 4:
-        print(f"ERROR: {line}")
         return None
     
     if not parsed_line or not is_ism(parsed_line[2], parsed_line[3]):
         return None
-
-    location = extract_location(parsed_line[0])
+    
     description = extract_description(parsed_line[3])
     ism = parse_description(description)
 
-    ism["location"] = location
+    ism.update(extract_location(parsed_line[0]))
+    ism["word"] = parsed_line[1]
+    ism["tag"] = parsed_line[2]
+
     return ism
 
 def extract_location(location):
@@ -33,7 +36,8 @@ def extract_location(location):
     Returns:
         list: A list of integers representing the location -> chapter - verse - word - token.
     """
-    return [int(x) for x in location.split(":")]
+    res = location.split(":")
+    return {"chapter": int(res[0]), "verse": int(res[1]), "character": int(res[2]), "token": int(res[3])}
 
 def is_ism(tag_segment, desc_segment):
     """
@@ -69,22 +73,21 @@ def parse_description(segments : list[str]):
     """ 
     res = {}
     cases = ["NOM", "ACC", "GEN"]
+    res['status'], res["gender"], res["number"], res["type"] = "NOM", "M", "S", "proper" # Default values
+    
     for segment in segments:
         if "ROOT" in segment:
             res["root"] = segment.split(":")[1]
         elif "LEM" in segment:
-            res["lemma"] = segment.split(":")[1]
+            res["lem"] = segment.split(":")[1]
         elif segment in cases:
-            res["case"] = segment
+            res["status"] = segment
         elif "INDEF" in segment:
             res["type"] = "common"
         else:
             temp = extract_gender_number(segment)
             if temp:
                 res["gender"], res["number"] = temp
-    
-    if "type" not in res:
-        res["type"] = "proper"
 
     return res
 
@@ -129,8 +132,15 @@ def parse_file(file_path):
 
 if __name__ == "__main__":
     file_path = "quran-morphology.txt"    # NOTE: delete this
-    res = parse_file(file_path)
+    isms = parse_file(file_path)
 
-    for ism in res:
-        print(ism)
-        pass
+    for ism in isms:
+
+        res = requests.post('http://localhost:5000/submit', json=ism)
+        if res.status_code == 200 or res.status_code == 201:
+            print("Success")
+        else:
+            print(ism)
+            print(res.status_code)
+            print(res.text)
+            break
