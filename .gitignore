@@ -42,3 +42,5 @@ public_key.pem
 \#innodb_redo/
 \#innodb_temp/
 \#ib_*
+
+mysql-data
