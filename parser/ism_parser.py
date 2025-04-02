@@ -8,7 +8,17 @@ def parse_line(line):
     Returns:
         list: location - word - tag - description.
     """
-    return line.split()  
+    parsed_line = line.split()
+
+    if not is_ism(parsed_line[2], parsed_line[3]):
+        print("Not an ism")
+        return None
+
+    location = extract_location(parsed_line[0])
+    description = extract_description(parsed_line[3])
+    ism = parse_description(description)
+
+    return ism
 
 def extract_location(location):
     """
@@ -93,18 +103,9 @@ def extract_gender_number(segment):
     return None
 
 def start_parser():
-    sample_text = "74:53:3:1	لَّا	P	NEG|LEM:لا"
-    parsed_line = parse_line(sample_text)
+    sample_text = "75:12:4:2	مُسْتَقَرُّ	N	PASS_PCPL|VF:10|ROOT:قرر|LEM:مُسْتَقَرّ|M|NOM"
+    print(parse_line(sample_text))
 
-    if not is_ism(parsed_line[2], parsed_line[3]):
-        print("Not an ism")
-        return
-    
-    location = extract_location(parsed_line[0])
-    description = extract_description(parsed_line[3])
-    ism = parse_description(description)
-
-    print(ism)
 
 if __name__ == "__main__":
     start_parser()
