@@ -9,15 +9,18 @@ def parse_line(line):
         list: location - word - tag - description.
     """
     parsed_line = line.split()
-
+    if len(parsed_line) < 4:
+        print(f"ERROR: {line}")
+        return None
+    
     if not parsed_line or not is_ism(parsed_line[2], parsed_line[3]):
-        print("Not an ism")
         return None
 
     location = extract_location(parsed_line[0])
     description = extract_description(parsed_line[3])
     ism = parse_description(description)
 
+    ism["location"] = location
     return ism
 
 def extract_location(location):
@@ -106,6 +109,28 @@ def start_parser():
     sample_text = "75:12:4:2	مُسْتَقَرُّ	N	PASS_PCPL|VF:10|ROOT:قرر|LEM:مُسْتَقَرّ|M|NOM"
     print(parse_line(sample_text))
 
+def parse_file(file_path):
+    """
+    Parses a file and returns a list of isms.
+
+    Args:
+        file_path (str): The path to the file to be parsed.
+
+    Returns:
+        list: A list of isms.
+    """
+    isms = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            parsed_line = parse_line(line)
+            if parsed_line:
+                isms.append(parsed_line)
+    return isms
 
 if __name__ == "__main__":
-    start_parser()
+    file_path = "quran-morphology.txt"    # NOTE: delete this
+    res = parse_file(file_path)
+
+    for ism in res:
+        print(ism)
+        pass
