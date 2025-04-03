@@ -37,7 +37,7 @@ def extract_location(location):
         list: A list of integers representing the location -> chapter - verse - word - token.
     """
     res = location.split(":")
-    return {"chapter": int(res[0]), "verse": int(res[1]), "character": int(res[2]), "token": int(res[3])}
+    return {"chapter": int(res[0]), "verse": int(res[1]), "word_num": int(res[2]), "token": int(res[3])}
 
 def is_ism(tag_segment, desc_segment):
     """
@@ -46,6 +46,9 @@ def is_ism(tag_segment, desc_segment):
     Returns:
         bool: True if the word is an ism, False otherwise.
     """
+    if "PN" in desc_segment:
+        return True
+    
     return False if "ROOT" not in desc_segment or tag_segment != "N" else True
 
 def extract_description(description):
@@ -107,10 +110,6 @@ def extract_gender_number(segment):
             return (gen_num, "S") if len(gen_num) == 1 else (gen_num[0], gen_num[-1])
     
     return None
-
-def start_parser():
-    sample_text = "75:12:4:2	مُسْتَقَرُّ	N	PASS_PCPL|VF:10|ROOT:قرر|LEM:مُسْتَقَرّ|M|NOM"
-    print(parse_line(sample_text))
 
 def parse_file(file_path):
     """

@@ -13,7 +13,7 @@ drop table isms;
 CREATE TABLE corpus_isms(
     chapter INT NOT NULL,
     verse INT NOT NULL,
-    `character` INT NOT NULL,
+    word_num INT NOT NULL,
     token INT NOT NULL,
     word VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     tag VARCHAR(255) NOT NULL,
@@ -31,3 +31,13 @@ CREATE TABLE corpus_isms(
 insert into corpus_isms (chapter, verse, `character`, token, word, tag, `status`, `number`, gender, `type`, lem)
 VALUES (37, 130, 3, 1, 'إِلْيَاسِينَ', 'N', 'GEN', 'P', 'M', 'proper', 'إِلْياس');
 
+select distinct word from corpus
+where tag = "N" and info NOT like '%ROOT%'
+
+SELECT info, MIN(word) AS word, MIN(chapter) AS chapter, MIN(verse) AS verse, MIN(word_num) AS word_num
+FROM corpus
+WHERE 
+    tag = "N"
+    AND info NOT LIKE "%ROOT%"
+    AND info NOT LIKE "%PN%"
+GROUP BY info;
