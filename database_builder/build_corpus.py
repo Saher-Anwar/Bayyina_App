@@ -2,21 +2,18 @@ import requests
 
 def build_corpus_database(api_path, file_path):
     """
-    Build a corpus database from a text file containing URLs.
+    Build a corpus database from a text file containing corpus data.
 
     This function reads a text file specified by file_path, where each line
-    contains a URL. It then fetches the content from each URL and creates a
-    dictionary where the keys are the URLs and the values are the fetched content.
+    contains a corpus data for each word. It retrieves the lines, parses it 
+    into a format and sends a POST request to the api path to add the data to 
+    the SQL table.
 
     Parameters:
-    file_path (str): The path to the text file containing URLs.
-
-    Returns:
-    dict: A dictionary where keys are URLs and values are the fetched content.
-          If a URL cannot be fetched, its value will be None.
+    file_path (str): The path to the text file containing corpus data.
 
     Raises:
-    FileNotFoundError: If the specified file_path does not exist.
+    RequestException: In case any issues with sending a request to the API endpoint.
     """
     with open(file_path, 'r') as file:
         for line in file:
