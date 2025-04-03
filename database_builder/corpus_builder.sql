@@ -14,3 +14,12 @@ alter table corpus change column `character` word_num INT NOT NULL
 select * from corpus;
 
 delete from corpus;
+
+SELECT 
+    verse, 
+    word_num, 
+    GROUP_CONCAT(word ORDER BY token SEPARATOR '') AS combined_word
+FROM corpus
+WHERE chapter = 114
+GROUP BY verse, word_num
+ORDER BY verse, word_num;

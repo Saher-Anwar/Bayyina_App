@@ -35,5 +35,5 @@ ALTER TABLE corpus_isms
 DROP PRIMARY KEY,
 ADD PRIMARY KEY (chapter, verse, `character`, token);
 
-select * from quran_text;
-
+select * from corpus
+where chapter = 37 and verse = 130;

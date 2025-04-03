@@ -256,26 +256,36 @@ def submit_corpus_data():
 
 @app.route('/corpus_count_words_in_chapter', methods=['GET'])
 def corpus_count_words_in_chapter():
-    # Get a connection from the pool
     connection = connection_pool.get_connection()
     cursor = connection.cursor()
 
     chapter = request.json['chapter']
     try:
-        # Fetch all rows from the `corpus` table
-        select_query = f"SELECT COUNT(*) FROM {settings['corpus_table']} WHERE chapter = %s AND token = 1"
+        select_query = f"""
+            SELECT 
+                verse, 
+                word_num, 
+                GROUP_CONCAT(word ORDER BY token SEPARATOR '') AS combined_word
+            FROM {settings['corpus_table']}
+            WHERE chapter = %s
+            GROUP BY verse, word_num
+            ORDER BY verse, word_num;
+        """
         cursor.execute(select_query, (chapter,))
-        res = cursor.fetchone()[0]
+        res = cursor.fetchall()
 
-        return jsonify({"count": res}), 200
+        # Extract only the combined words from the result
+        words = [row[2] for row in res]
+
+        return jsonify(words), 200
 
     except mysql.connector.Error as err:
         return jsonify({'error': str(err)}), 500
 
     finally:
-        # Release the connection back to the pool
         cursor.close()
         connection.close()
+
 
 @app.route('/test', methods=['GET'])
 def test():
