@@ -212,14 +212,14 @@ def submit_corpus_data():
     data = request.json
 
     # Validate required fields
-    required_fields = ['chapter', 'verse', 'word_num', 'token', 'word', 'tag', 'info']
+    required_fields = ['chapter', 'verse', 'word_num', 'token', 'tag', 'info']
     if not all(field in data for field in required_fields):
         return jsonify({'error': 'Missing required fields'}), 400
 
     # Validate data types
     if not isinstance(data['chapter'], int) or not isinstance(data['verse'], int) or not isinstance(data['word_num'], int) or not isinstance(data['token'], int):
         return jsonify({'error': 'Fields chapter and verse must be integers'}), 400
-
+    
     # Get a connection from the pool
     connection = connection_pool.get_connection()
     cursor = connection.cursor()
@@ -238,7 +238,7 @@ def submit_corpus_data():
             data['verse'],
             data['word_num'],
             data['token'],
-            data['word'],
+            data.get('word', ''),
             data['tag'],
             data['info']
         ))

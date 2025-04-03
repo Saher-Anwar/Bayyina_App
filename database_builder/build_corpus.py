@@ -51,6 +51,7 @@ def build_corpus_database(api_path, file_path):
             except requests.RequestException as e:
                 print(f"Request failed: {e}")
                 print(data)
+                break
 
 if __name__ == "__main__":
     file_path = "quran-morphology.txt"
