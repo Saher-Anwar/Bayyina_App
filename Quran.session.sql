@@ -17,23 +17,16 @@ CREATE TABLE corpus_isms(
     token INT NOT NULL,
     word VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     tag VARCHAR(255) NOT NULL,
-    `status` ENUM('nominative', 'accusative', 'genitive') NOT NULL,
-    gender ENUM('m', 'f') NOT NULL,
-    `number` ENUM('singular', 'pair', 'plural') NOT NULL,
+    `status` ENUM('NOM', 'ACC', 'GEN') NOT NULL,
+    gender ENUM('M', 'F') NOT NULL,
+    `number` ENUM('S', 'D', 'P') NOT NULL,
     `type` ENUM('proper', 'common') NOT NULL,
     heaviness ENUM('light', 'heavy'),
     flexibility ENUM('flexible', 'partial', 'non-flexible'),
     `root` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     lem VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-    PRIMARY KEY(chapter, verse, `character`)
+    PRIMARY KEY(chapter, verse, `character`, token)
 );
-
-ALTER TABLE corpus_isms MODIFY COLUMN `number` ENUM('S', 'D', 'P') NOT NULL;
-ALTER TABLE corpus_isms MODIFY COLUMN `status` ENUM('NOM', 'ACC', 'GEN') NOT NULL;
-ALTER TABLE corpus_isms MODIFY COLUMN `gender` ENUM('M', 'F') NOT NULL;
-ALTER TABLE corpus_isms
-DROP PRIMARY KEY,
-ADD PRIMARY KEY (chapter, verse, `character`, token);
 
 insert into corpus_isms (chapter, verse, `character`, token, word, tag, `status`, `number`, gender, `type`, lem)
 VALUES (37, 130, 3, 1, 'إِلْيَاسِينَ', 'N', 'GEN', 'P', 'M', 'proper', 'إِلْياس');
