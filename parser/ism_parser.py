@@ -129,17 +129,22 @@ def parse_file(file_path):
                 isms.append(parsed_line)
     return isms
 
+def test_parser():
+    sample_text = "47:2:9:1	مُحَمَّدٍ	N	PN|ROOT:حمد|LEM:مُحَمَّد|GEN"
+    print(parse_line(sample_text))
+
 if __name__ == "__main__":
-    file_path = "quran-morphology.txt"    # NOTE: delete this
-    isms = parse_file(file_path)
+    # file_path = "quran-morphology.txt"    # NOTE: delete this
+    # isms = parse_file(file_path)
 
-    for ism in isms:
+    # for ism in isms:
 
-        res = requests.post('http://localhost:5000/submit', json=ism)
-        if res.status_code == 200 or res.status_code == 201:
-            print("Success")
-        else:
-            print(ism)
-            print(res.status_code)
-            print(res.text)
-            break
+    #     res = requests.post('http://localhost:5000/submit', json=ism)
+    #     if res.status_code == 200 or res.status_code == 201:
+    #         print("Success")
+    #     else:
+    #         print(ism)
+    #         print(res.status_code)
+    #         print(res.text)
+    #         break
+    test_parser()

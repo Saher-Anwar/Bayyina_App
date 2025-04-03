@@ -10,7 +10,7 @@ CREATE TABLE isms (
 
 drop table isms;
 
-CREATE TABLE corpus_isms(
+CREATE TABLE isms(
     chapter INT NOT NULL,
     verse INT NOT NULL,
     word_num INT NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE corpus_isms(
     flexibility ENUM('flexible', 'partial', 'non-flexible'),
     `root` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     lem VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-    PRIMARY KEY(chapter, verse, `character`, token)
+    PRIMARY KEY(chapter, verse, word_num, token)
 );
 
 insert into corpus_isms (chapter, verse, `character`, token, word, tag, `status`, `number`, gender, `type`, lem)
@@ -41,3 +41,8 @@ WHERE
     AND info NOT LIKE "%ROOT%"
     AND info NOT LIKE "%PN%"
 GROUP BY info;
+
+select word 
+from isms
+where `root` IS NULL
+GROUP BY word

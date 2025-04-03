@@ -17,7 +17,7 @@ db_config = {
 }
 
 settings = {
-    'table_name': 'corpus_isms',
+    'table_name': 'isms',
     'quran_table': 'quran_text',
     'corpus_table': 'corpus'
 }
@@ -31,13 +31,19 @@ def submit_data():
     data = request.json
 
     # Validate required fields
-    required_fields = ['chapter', 'verse', 'character', 'token', 'word', 'tag', 'status', 'gender', 'number', 'type', 'root', 'lem']
+    required_fields = ['chapter', 'verse', 'word_num', 'token', 'word', 'tag', 'status', 'gender', 'number', 'type', 'lem']
     if not all(field in data for field in required_fields):
-        return jsonify({'error': 'Missing required fields'}), 400
+
+        return jsonify(
+                {
+                    'error': 'Missing required fields',
+                    'missing_fields': [field for field in required_fields if field not in data]
+                }
+            ), 400
 
     # Validate data types
-    if not isinstance(data['chapter'], int) or not isinstance(data['verse'], int) or not isinstance(data['token'], int):
-        return jsonify({'error': 'Fields chapter, verse, and token must be integers'}), 400
+    if not isinstance(data['chapter'], int) or not isinstance(data['verse'], int) or not isinstance(data["word_num"], int) or not isinstance(data['token'], int):
+        return jsonify({'error': 'Fields chapter, verse, word_num, and token must be integers'}), 400
 
     # Get a connection from the pool
     connection = connection_pool.get_connection()
@@ -47,7 +53,7 @@ def submit_data():
         # Insert data into the `isms` table, handle optional fields
         insert_query = f"""
         INSERT INTO {settings['table_name']} (
-            chapter, verse, `character`, token, word, tag, `status`, gender, `number`, `type`, root, lem, heaviness, flexibility
+            chapter, verse, word_num, token, word, tag, `status`, gender, `number`, `type`, root, lem, heaviness, flexibility
         ) 
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
@@ -55,11 +61,12 @@ def submit_data():
         # Set `heaviness` and `flexibility` to NULL if not provided in data
         heaviness = data.get('heaviness', None)
         flexibility = data.get('flexibility', None)
+        root = data.get('root', None)
 
         cursor.execute(insert_query, (
             data['chapter'],
             data['verse'],
-            data['character'],
+            data['word_num'],
             data['token'],
             data['word'],
             data['tag'],
@@ -67,7 +74,7 @@ def submit_data():
             data['gender'],
             data['number'],
             data['type'],
-            data['root'],
+            root,
             data['lem'],
             heaviness,
             flexibility
@@ -285,7 +292,6 @@ def corpus_count_words_in_chapter():
     finally:
         cursor.close()
         connection.close()
-
 
 @app.route('/test', methods=['GET'])
 def test():
