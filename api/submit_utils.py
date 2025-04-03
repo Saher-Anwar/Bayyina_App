@@ -254,6 +254,29 @@ def submit_corpus_data():
         cursor.close()
         connection.close()
 
+@app.route('/corpus_count_words_in_chapter', methods=['GET'])
+def corpus_count_words_in_chapter():
+    # Get a connection from the pool
+    connection = connection_pool.get_connection()
+    cursor = connection.cursor()
+
+    chapter = request.json['chapter']
+    try:
+        # Fetch all rows from the `corpus` table
+        select_query = f"SELECT COUNT(*) FROM {settings['corpus_table']} WHERE chapter = %s AND token = 1"
+        cursor.execute(select_query, (chapter,))
+        res = cursor.fetchone()[0]
+
+        return jsonify({"count": res}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+
+    finally:
+        # Release the connection back to the pool
+        cursor.close()
+        connection.close()
+
 @app.route('/test', methods=['GET'])
 def test():
     return jsonify({'message': 'Test endpoint is working'}), 200
