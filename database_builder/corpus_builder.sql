@@ -17,3 +17,13 @@ FROM corpus
 WHERE chapter = 114
 GROUP BY verse, word_num
 ORDER BY verse, word_num;
+
+select * from corpus
+where tag <> 'N' and tag <> 'P' and tag <> 'V';
+
+update corpus
+set word = 'إِلْيَاسِينَ', tag = "N", info = "PN|LEM:إِلْياس|GEN"
+where chapter = 37 and verse = 130 and word_num = 3 and token = 1;
+
+select * from corpus
+where chapter = 37 and verse = 130 and word_num = 3 and token = 1;

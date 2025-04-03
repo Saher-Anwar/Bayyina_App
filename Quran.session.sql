@@ -36,4 +36,4 @@ DROP PRIMARY KEY,
 ADD PRIMARY KEY (chapter, verse, `character`, token);
 
 select * from corpus
-where chapter = 37 and verse = 130;
+where tag <> 'N' and tag <> 'P' and tag <> 'V';
