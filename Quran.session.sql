@@ -35,5 +35,5 @@ ALTER TABLE corpus_isms
 DROP PRIMARY KEY,
 ADD PRIMARY KEY (chapter, verse, `character`, token);
 
-select * from corpus_isms;;
-SELECT COUNT(*) FROM corpus_isms;
+select * from corpus_isms
+where `status` ==
