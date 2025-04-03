@@ -35,5 +35,6 @@ ALTER TABLE corpus_isms
 DROP PRIMARY KEY,
 ADD PRIMARY KEY (chapter, verse, `character`, token);
 
-select * from corpus
-where tag <> 'N' and tag <> 'P' and tag <> 'V';
+insert into corpus_isms (chapter, verse, `character`, token, word, tag, `status`, `number`, gender, `type`, lem)
+VALUES (37, 130, 3, 1, 'إِلْيَاسِينَ', 'N', 'GEN', 'P', 'M', 'proper', 'إِلْياس');
+
