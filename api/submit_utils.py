@@ -18,6 +18,8 @@ db_config = {
 
 settings = {
     'table_name': 'corpus_isms',
+    'quran_table': 'quran_text',
+    'corpus_table': 'corpus'
 }
 
 # Create a connection pool
@@ -168,6 +170,81 @@ def print_table():
             })
 
         return jsonify(result), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+
+    finally:
+        # Release the connection back to the pool
+        cursor.close()
+        connection.close()
+
+@app.route('/get_chapter', methods=['GET'])
+def get_chapter():
+    # Get a connection from the pool
+    connection = connection_pool.get_connection()
+    cursor = connection.cursor()
+
+    try:
+        # Get the chapter from the request
+        chapter = request.json['chapter']
+
+        # Fetch all rows from the `isms` table for the specified chapter
+        select_query = f"SELECT * FROM {settings['quran_table']} WHERE sura = %s"
+        cursor.execute(select_query, (chapter, ))
+
+        # Fetch all verses
+        verses = [row[3] for row in cursor.fetchall()]
+
+        return jsonify({'chapter': chapter, 'verses': verses}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+
+    finally:
+        # Release the connection back to the pool
+        cursor.close()
+        connection.close()
+
+@app.route('/submit_corpus_data', methods=['POST'])
+def submit_corpus_data():
+    # Get JSON data from the request
+    data = request.json
+
+    # Validate required fields
+    required_fields = ['chapter', 'verse', 'word_num', 'token', 'word', 'tag', 'info']
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    # Validate data types
+    if not isinstance(data['chapter'], int) or not isinstance(data['verse'], int) or not isinstance(data['word_num'], int) or not isinstance(data['token'], int):
+        return jsonify({'error': 'Fields chapter and verse must be integers'}), 400
+
+    # Get a connection from the pool
+    connection = connection_pool.get_connection()
+    cursor = connection.cursor()
+
+    try:
+        # Insert data into the `corpus` table
+        insert_query = f"""
+        INSERT INTO {settings['corpus_table']} (
+            chapter, verse, word_num, token, word, tag, info
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+
+        cursor.execute(insert_query, (
+            data['chapter'],
+            data['verse'],
+            data['word_num'],
+            data['token'],
+            data['word'],
+            data['tag'],
+            data['info']
+        ))
+
+        connection.commit()
+        return jsonify({'message': 'Data inserted successfully'}), 201
 
     except mysql.connector.Error as err:
         return jsonify({'error': str(err)}), 500
