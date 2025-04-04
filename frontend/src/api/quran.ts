@@ -1,0 +1,1 @@
+// Fetches Qur'an pages and verses
