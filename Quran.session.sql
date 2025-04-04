@@ -28,21 +28,22 @@ CREATE TABLE isms(
     PRIMARY KEY(chapter, verse, word_num, token)
 );
 
-insert into corpus_isms (chapter, verse, `character`, token, word, tag, `status`, `number`, gender, `type`, lem)
+insert into isms (chapter, verse, `character`, token, word, tag, `status`, `number`, gender, `type`, lem)
 VALUES (37, 130, 3, 1, 'إِلْيَاسِينَ', 'N', 'GEN', 'P', 'M', 'proper', 'إِلْياس');
 
-select distinct word from corpus
+select distinct word from morphology
 where tag = "N" and info NOT like '%ROOT%'
 
 SELECT info, MIN(word) AS word, MIN(chapter) AS chapter, MIN(verse) AS verse, MIN(word_num) AS word_num
-FROM corpus
+FROM morphology
 WHERE 
     tag = "N"
     AND info NOT LIKE "%ROOT%"
     AND info NOT LIKE "%PN%"
 GROUP BY info;
 
-select word 
+select * 
 from isms
-where `root` IS NULL
-GROUP BY word
+where word = 'إِلْيَاسِينَ'
+
+select * from quran

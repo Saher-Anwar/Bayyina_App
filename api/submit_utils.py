@@ -18,8 +18,8 @@ db_config = {
 
 settings = {
     'table_name': 'isms',
-    'quran_table': 'quran_text',
-    'corpus_table': 'corpus'
+    'quran_table': 'quran',
+    'corpus_table': 'morphology'
 }
 
 # Create a connection pool

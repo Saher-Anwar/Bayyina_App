@@ -1,6 +1,5 @@
 import unittest
 import requests
-from camel_tools.utils.dediac import dediac_ar 
 
 class WordMatcher(unittest.TestCase):
     api = "http://localhost:5000/"
