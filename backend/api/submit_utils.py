@@ -293,6 +293,79 @@ def corpus_count_words_in_chapter():
         cursor.close()
         connection.close()
 
+@app.route('/add_page_info', methods=["POST"])
+def add_page_info():
+    connection = connection_pool.get_connection()
+    cursor = connection.cursor()
+
+    page_info = request.json
+    
+    try:
+        # Skip the first empty element if present
+        start_idx = 1 if not page_info[0] else 0
+        total_pages = len(page_info) - start_idx
+        
+        for i in range(start_idx, len(page_info)):
+            page_num = i - start_idx + 1  # Start page numbers from 1
+            current = page_info[i]
+            
+            if not current:
+                continue
+                
+            current_sura, current_aya = current
+            
+            # Determine the end of this page's range
+            if i < len(page_info) - 1 and page_info[i+1]:
+                next_sura, next_aya = page_info[i+1]
+                
+                if current_sura == next_sura:
+                    # Same surah case
+                    query = """
+                        UPDATE {}
+                        SET page_num = %s
+                        WHERE sura = %s AND aya >= %s AND aya < %s
+                    """.format(settings['quran_table'])
+                    params = (page_num, current_sura, current_aya, next_aya)
+                else:
+                    # Cross-surah case
+                    query = """
+                        UPDATE {}
+                        SET page_num = %s
+                        WHERE 
+                            (sura = %s AND aya >= %s) OR
+                            (sura > %s AND sura < %s) OR
+                            (sura = %s AND aya < %s)
+                    """.format(settings['quran_table'])
+                    params = (page_num, 
+                             current_sura, current_aya,
+                             current_sura, next_sura,
+                             next_sura, next_aya)
+            else:
+                # Last page case - include all remaining verses
+                query = """
+                    UPDATE {}
+                    SET page_num = %s
+                    WHERE sura = %s AND aya >= %s
+                """.format(settings['quran_table'])
+                params = (page_num, current_sura, current_aya)
+            
+            cursor.execute(query, params)
+        
+        connection.commit()
+        return jsonify({
+            'status': 'success',
+            'pages_processed': total_pages,
+            'first_page': page_info[start_idx],
+            'last_page': page_info[-1]
+        }), 200
+        
+    except mysql.connector.Error as err:
+        connection.rollback()
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
 @app.route('/test', methods=['GET'])
 def test():
     return jsonify({'message': 'Test endpoint is working'}), 200

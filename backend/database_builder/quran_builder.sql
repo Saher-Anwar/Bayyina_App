@@ -49,6 +49,7 @@ USE quran_info;
 DROP TABLE IF EXISTS `quran`;
 CREATE TABLE `quran` (
   `index` int(4) NOT NULL auto_increment,
+  'page_num' int NOT NULL
   `sura` int(3) NOT NULL default '0',
   `aya` int(3) NOT NULL default '0',
   `text` text NOT NULL,
