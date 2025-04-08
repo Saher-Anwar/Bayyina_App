@@ -122,7 +122,7 @@ def parse_file(file_path):
         list: A list of isms.
     """
     isms = []
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         for line in file:
             parsed_line = parse_line(line)
             if parsed_line:
