@@ -139,7 +139,7 @@ def get_chapter(cursor, connection):
     if not request.json or 'chapter' not in request.json:
         return jsonify({'error': 'Missing chapter parameter'}), 400
     
-    chapter = request.json['chapter']
+    chapter = request.args['chapter']
     cursor.execute(
         f"SELECT * FROM {SETTINGS['quran_table']} WHERE sura = %s", 
         (chapter,)
@@ -252,6 +252,20 @@ def add_page_info(cursor, connection):
         'first_page': page_info[start_idx],
         'last_page': page_info[-1]
     }), 200
+
+@app.route('/print_quran_table', methods=['GET'])
+@with_db_connection
+def print_quran_table(cursor, connection):
+    try:
+        cursor.execute(f"SELECT page_num, sura, aya, text FROM {SETTINGS['quran_table']}")
+        return jsonify({
+            'status': 'success',
+            'count': cursor.rowcount,
+            'data': cursor.fetchall()
+        })
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 
 @app.route('/test', methods=['GET'])
 def test():
