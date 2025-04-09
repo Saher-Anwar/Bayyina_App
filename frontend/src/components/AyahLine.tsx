@@ -19,14 +19,15 @@ export const AyahLine: React.FC<AyahLineProps> = ({ ayat }) => {
 
 const styles = StyleSheet.create({
   ayahText: {
-    fontSize: 22,
+    fontSize: 26,
     writingDirection: 'rtl',
     textAlign: 'right',
-    lineHeight: 36,
-    marginBottom: 24,
+    color: '#FFFFFF',
+    fontFamily: 'Scheherazade_400Regular',
+    lineHeight: 40,
   },
   ayahEnd: {
     fontSize: 18,
-    color: '#888',
+    color: '#AAAAAA',
   },
 });

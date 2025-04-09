@@ -10,7 +10,9 @@ type SurahProps = {
 export const Surah: React.FC<SurahProps> = ({ name, ayat }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.surahName}>{name}</Text>
+      <View style={styles.surahHeader}>
+        <Text style={styles.surahName}>{name}</Text>
+      </View>
       <AyahLine ayat={ayat} />
     </View>
   );
@@ -18,15 +20,22 @@ export const Surah: React.FC<SurahProps> = ({ name, ayat }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 32,
+    marginBottom: 40,
+  },
+  surahHeader: {
+    borderWidth: 2,
+    borderColor: '#FFD700',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginVertical: 20,
+    backgroundColor: '#1C1C1C',
+    alignSelf: 'center',
   },
   surahName: {
     fontSize: 28,
+    fontFamily: 'ScheherazadeNew_700Bold',
+    color: '#FFD700',
     textAlign: 'center',
-    fontWeight: 'bold',
-    marginVertical: 16,
-    borderBottomWidth: 2,
-    borderColor: '#ddd',
-    paddingBottom: 8,
   },
 });
