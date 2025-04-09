@@ -1,57 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, FlatList, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { SafeAreaView, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { Surah } from './src/components/Surah';
+import { mockQuranData } from './src/data/mockQuran';
 
-type Ayah = {
-  surah: number;
-  ayah: number;
-  text: string;
+type SurahType = {
+  surahNumber: number;
+  name: string;
+  ayat: string[];
 };
 
 export default function App() {
-  const [quranData, setQuranData] = useState<Ayah[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<SurahType[]>(mockQuranData.slice(0, 1));
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  // Mock data simulating your API response
-  const mockQuranAPI = async (): Promise<Ayah[]> => {
-    return new Promise((resolve) =>
-      setTimeout(() => {
-        resolve([
-          { surah: 1, ayah: 1, text: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ' },
-          { surah: 1, ayah: 2, text: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ' },
-          { surah: 1, ayah: 3, text: 'الرَّحْمَٰنِ الرَّحِيمِ' },
-          { surah: 1, ayah: 4, text: 'مَالِكِ يَوْمِ الدِّينِ' },
-          { surah: 1, ayah: 5, text: 'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ' },
-        ]);
-      }, 1000)
-    );
-  };
+  const loadMore = useCallback(() => {
+    if (loading || page >= mockQuranData.length) return;
 
-  useEffect(() => {
-    mockQuranAPI().then((data) => {
-      setQuranData(data);
+    setLoading(true);
+    setTimeout(() => {
+      const nextPage = page + 1;
+      setData(prev => [...prev, mockQuranData[page]]);
+      setPage(nextPage);
       setLoading(false);
-    });
-  }, []);
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#00aa00" />
-      </SafeAreaView>
-    );
-  }
+    }, 1000);
+  }, [loading, page]);
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={quranData}
-        keyExtractor={(item) => `${item.surah}:${item.ayah}`}
-        renderItem={({ item }) => (
-          <Text style={styles.ayahText}>
-            <Text style={styles.ayahNumber}>({item.surah}:{item.ayah}) </Text>
-            {item.text}
-          </Text>
-        )}
+        data={data}
+        keyExtractor={(item) => item.surahNumber.toString()}
+        renderItem={({ item }) => <Surah name={item.name} ayat={item.ayat} />}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={loading ? <ActivityIndicator size="large" /> : null}
       />
     </SafeAreaView>
   );
@@ -60,18 +43,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     paddingHorizontal: 16,
-    paddingTop: 50,
-  },
-  ayahText: {
-    fontSize: 22,
-    marginBottom: 16,
-    writingDirection: 'rtl',
-    textAlign: 'right',
-  },
-  ayahNumber: {
-    fontSize: 16,
-    color: '#555',
+    paddingTop: 20,
   },
 });
