@@ -4,16 +4,24 @@ import { AyahLine } from './AyahLine';
 
 type SurahProps = {
   name: string;
-  ayat: string[];
+  ayat: string[][];
+  surahNumber: number;
+  onWordPress: (info: { word: string; surahNumber: number; verseNumber: number; wordIndex: number }) => void;
+  selectedWordInfo: { surahNumber: number; verseNumber: number; wordIndex: number } | null;
 };
 
-export const Surah: React.FC<SurahProps> = ({ name, ayat }) => {
+export const Surah: React.FC<SurahProps> = ({ name, ayat, surahNumber, onWordPress, selectedWordInfo }) => {
   return (
     <View style={styles.container}>
       <View style={styles.surahHeader}>
         <Text style={styles.surahName}>{name}</Text>
       </View>
-      <AyahLine ayat={ayat} />
+      <AyahLine
+        ayat={ayat}
+        onWordPress={onWordPress}
+        surahNumber={surahNumber}
+        selectedWordInfo={selectedWordInfo}
+      />
     </View>
   );
 };
