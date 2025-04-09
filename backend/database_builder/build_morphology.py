@@ -15,13 +15,14 @@ def build_corpus_database(api_path, file_path):
     Raises:
     RequestException: In case any issues with sending a request to the API endpoint.
     """
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         for line in file:
             segments = line.split()
             if len(segments) < 3:  # Ensure there's enough data to process
                 print(f"Skipping invalid line: {line.strip()}")
                 continue
-
+            
+            
             # Extract common fields
             chapter, verse, word_num, token = segments[0].split(':')
 
@@ -51,6 +52,6 @@ def build_corpus_database(api_path, file_path):
                 break
 
 if __name__ == "__main__":
-    file_path = "quran-morphology.txt"
+    file_path = "./backend/quran-morphology.txt"
     api_path = "http://localhost:5000/submit_corpus_data"
     build_corpus_database(api_path, file_path)
