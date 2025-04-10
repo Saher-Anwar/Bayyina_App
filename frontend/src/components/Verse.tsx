@@ -1,32 +1,33 @@
 import React from 'react';
 import { Text, View, StyleSheet, Pressable } from 'react-native';
 
-type AyahLineProps = {
-  ayat: string[][];
-  onWordPress: (info: { word: string; surahNumber: number; verseNumber: number; wordIndex: number }) => void;
-  surahNumber: number;
+type VerseProps = {
+  verses: string[][];
+  onWordPress: (info: { word: string; chapterNumber: number; verseNumber: number; wordIndex: number }) => void;
+  chapterNumber: number;
   selectedWordInfo: {
-    surahNumber: number;
+    chapterNumber: number;
     verseNumber: number;
     wordIndex: number;
   } | null;
 };
 
-export const AyahLine: React.FC<AyahLineProps> = ({
-  ayat,
+export const Verse: React.FC<VerseProps> = ({
+  verses: verses,
   onWordPress,
-  surahNumber,
+  chapterNumber,
   selectedWordInfo,
 }) => {
   return (
     <View style={styles.container}>
       {/* Render all words in a single row (RTL) */}
       <View style={styles.wordsContainer}>
-        {ayat.map((words, verseIndex) => (
+
+        {verses.map((words, verseIndex) => (
           <React.Fragment key={verseIndex}>
             {words.map((word, wordIndex) => {
               const isSelected =
-                selectedWordInfo?.surahNumber === surahNumber &&
+                selectedWordInfo?.chapterNumber === chapterNumber &&
                 selectedWordInfo?.verseNumber === verseIndex &&
                 selectedWordInfo?.wordIndex === wordIndex;
 
@@ -34,16 +35,17 @@ export const AyahLine: React.FC<AyahLineProps> = ({
                 <Pressable
                   key={`${verseIndex}-${wordIndex}`}
                   onPress={() =>
-                    onWordPress({ word, surahNumber, verseNumber: verseIndex, wordIndex })
+                    onWordPress({ word, chapterNumber, verseNumber: verseIndex, wordIndex })
                   }>
                   <Text style={[styles.word, isSelected && styles.highlight]}>{word}</Text>
                 </Pressable>
               );
             })}
-            {/* Ayah end marker (smaller and subtle) */}
-            <Text style={styles.ayahEnd}> ۝ </Text>
+            {/* Verse end marker (smaller and subtle) */}
+            <Text style={styles.verseEnd}> ۝ </Text>
           </React.Fragment>
         ))}
+        
       </View>
     </View>
   );
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 2,
   },
-  ayahEnd: {
+  verseEnd: {
     fontSize: 18,
     color: '#AAAAAA',
     marginHorizontal: 2, // Reduce spacing

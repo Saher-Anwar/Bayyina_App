@@ -1,25 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { AyahLine } from './AyahLine';
+import { Verse } from './Verse';
 
-type SurahProps = {
+type ChapterProps = {
   name: string;
-  ayat: string[][];
-  surahNumber: number;
-  onWordPress: (info: { word: string; surahNumber: number; verseNumber: number; wordIndex: number }) => void;
-  selectedWordInfo: { surahNumber: number; verseNumber: number; wordIndex: number } | null;
+  verses: string[][];
+  chapterNumber: number;
+  onWordPress: (info: { word: string; chapterNumber: number; verseNumber: number; wordIndex: number }) => void;
+  selectedWordInfo: { chapterNumber: number; verseNumber: number; wordIndex: number } | null;
 };
 
-export const Surah: React.FC<SurahProps> = ({ name, ayat, surahNumber, onWordPress, selectedWordInfo }) => {
+export const Chapter: React.FC<ChapterProps> = ({ name, verses: verse, chapterNumber: chapterNumber, onWordPress, selectedWordInfo }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.surahHeader}>
-        <Text style={styles.surahName}>{name}</Text>
+      <View style={styles.chapterHeader}>
+        <Text style={styles.chapterName}>{name}</Text>
       </View>
-      <AyahLine
-        ayat={ayat}
+      <Verse
+        verses={verse}
         onWordPress={onWordPress}
-        surahNumber={surahNumber}
+        chapterNumber={chapterNumber}
         selectedWordInfo={selectedWordInfo}
       />
     </View>
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 40,
   },
-  surahHeader: {
+  chapterHeader: {
     borderWidth: 2,
     borderColor: '#FFD700',
     borderRadius: 12,
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1C1C1C',
     alignSelf: 'center',
   },
-  surahName: {
+  chapterName: {
     fontSize: 28,
     fontFamily: 'ScheherazadeNew_700Bold',
     color: '#FFD700',

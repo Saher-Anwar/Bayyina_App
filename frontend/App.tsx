@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { SafeAreaView, FlatList, StyleSheet, ActivityIndicator, View, Text } from 'react-native';
-import { Surah } from './src/components/Surah';
+import { Chapter } from './src/components/Chapter';
 import { mockQuranData } from './src/data/mockQuran';
 import {
   useFonts,
@@ -8,10 +8,10 @@ import {
   Scheherazade_700Bold,
 } from '@expo-google-fonts/scheherazade';
 
-type SurahType = {
-  surahNumber: number;
+type ChapterType = {
+  chapterNumber: number;
   name: string;
-  ayat: string[][];
+  verses: string[][];
 };
 
 export default function App() {
@@ -20,12 +20,12 @@ export default function App() {
     Scheherazade_700Bold,
   });
 
-  const [data, setData] = useState<SurahType[]>(mockQuranData.slice(0, 1));
+  const [data, setData] = useState<ChapterType[]>(mockQuranData.slice(0, 1));
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [selectedWordInfo, setSelectedWordInfo] = useState<{
     word: string;
-    surahNumber: number;
+    chapterNumber: number;
     verseNumber: number;
     wordIndex: number;
   } | null>(null);
@@ -41,7 +41,7 @@ export default function App() {
     }, 1000);
   }, [loading, page]);
 
-  const handleWordPress = (info: { word: string; surahNumber: number; verseNumber: number; wordIndex: number }) => {
+  const handleWordPress = (info: { word: string; chapterNumber: number; verseNumber: number; wordIndex: number }) => {
     setSelectedWordInfo(info);
   };
 
@@ -57,12 +57,12 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={data}
-        keyExtractor={(item) => item.surahNumber.toString()}
+        keyExtractor={(item) => item.chapterNumber.toString()}
         renderItem={({ item }) => (
-          <Surah
+          <Chapter
             name={item.name}
-            ayat={item.ayat}
-            surahNumber={item.surahNumber}
+            verses={item.verses}
+            chapterNumber={item.chapterNumber}
             onWordPress={handleWordPress}
             selectedWordInfo={selectedWordInfo}
           />
