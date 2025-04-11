@@ -36,3 +36,4 @@ export const useQuran = (): QuranContextType => {
   }
   return context;
 };
+

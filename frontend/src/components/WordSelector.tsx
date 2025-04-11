@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { colors } from '../theme/colors';
 
 interface WordSelectorProps {
   text: string;
@@ -7,8 +8,7 @@ interface WordSelectorProps {
 }
 
 const WordSelector: React.FC<WordSelectorProps> = ({ text, onWordSelect }) => {
-  // Split text into words - a simple split by space for demonstration
-  // In a real app, you would need proper Arabic word segmentation
+  // Split text into words
   const words = text.split(' ');
   
   return (
@@ -32,13 +32,15 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   wordContainer: {
-    marginLeft: 4,
-    marginBottom: 4,
+    marginLeft: 6,
+    marginBottom: 8,
+    padding: 2,
   },
   wordText: {
-    fontSize: 22,
+    fontSize: 24,
     lineHeight: 36,
     fontFamily: 'System',
+    color: colors.text,
   },
 });
 

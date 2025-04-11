@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Verse } from '../types';
 import WordSelector from './WordSelector';
+import { colors } from '../theme/colors';
 
 interface VerseItemProps {
   verse: Verse;
@@ -26,13 +27,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#dee2e6',
+    borderBottomColor: colors.border,
+    backgroundColor: colors.surface,
   },
   verseNumberContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#f1f3f5',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primary + '20',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -40,6 +42,7 @@ const styles = StyleSheet.create({
   verseNumber: {
     fontSize: 14,
     fontWeight: '500',
+    color: colors.primary,
   },
   textContainer: {
     flex: 1,

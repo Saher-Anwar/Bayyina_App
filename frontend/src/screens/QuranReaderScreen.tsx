@@ -5,6 +5,7 @@ import VerseItem from '../components/VerseItem';
 import WordDetailsModal from '../components/WordDetailsModal';
 import { Word } from '../types';
 import { getWordDetails } from '../services/mockData';
+import { colors } from '../theme/colors';
 
 const QuranReaderScreen: React.FC = () => {
   const { selectedChapter, verses } = useQuran();
@@ -29,8 +30,9 @@ const QuranReaderScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.chapterTitle}>
-          {selectedChapter.id}. {selectedChapter.name} ({selectedChapter.arabicName})
+          {selectedChapter.id}. {selectedChapter.name}
         </Text>
+        <Text style={styles.chapterArabicTitle}>{selectedChapter.arabicName}</Text>
       </View>
       
       <FlatList
@@ -40,6 +42,7 @@ const QuranReaderScreen: React.FC = () => {
         )}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.versesList}
+        style={styles.versesContainer}
       />
       
       <WordDetailsModal
@@ -54,18 +57,28 @@ const QuranReaderScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
   },
   header: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#dee2e6',
-    backgroundColor: '#f8f9fa',
+    borderBottomColor: colors.border,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
   },
   chapterTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    textAlign: 'center',
+    color: colors.text,
+  },
+  chapterArabicTitle: {
+    fontSize: 28,
+    fontWeight: '500',
+    marginTop: 8,
+    color: colors.primary,
+  },
+  versesContainer: {
+    flex: 1,
   },
   versesList: {
     paddingBottom: 20,
@@ -75,10 +88,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: colors.background,
   },
   emptyText: {
     fontSize: 18,
-    color: '#adb5bd',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });

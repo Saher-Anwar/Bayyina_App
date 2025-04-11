@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Word } from '../types';
+import { colors } from '../theme/colors';
 
 interface WordDetailsModalProps {
   visible: boolean;
@@ -54,11 +55,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   modalView: {
     width: '80%',
-    backgroundColor: 'white',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 24,
     alignItems: 'center',
@@ -72,28 +73,31 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalWord: {
-    fontSize: 28,
+    fontSize: 32,
     marginBottom: 20,
     textAlign: 'center',
+    color: colors.primary,
   },
   detailRow: {
     flexDirection: 'row',
     width: '100%',
-    paddingVertical: 8,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
   },
   detailLabel: {
     flex: 1,
     fontSize: 16,
     fontWeight: 'bold',
+    color: colors.text,
   },
   detailValue: {
     flex: 2,
     fontSize: 16,
+    color: colors.text,
   },
   closeButton: {
-    backgroundColor: '#4361ee',
+    backgroundColor: colors.primary,
     borderRadius: 8,
     padding: 12,
     marginTop: 20,
@@ -101,7 +105,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   closeButtonText: {
-    color: 'white',
+    color: colors.surface,
     fontWeight: 'bold',
     fontSize: 16,
   },
