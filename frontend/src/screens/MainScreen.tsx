@@ -1,5 +1,6 @@
+// src/screens/MainScreen.tsx
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, TouchableOpacity, Animated, Text } from 'react-native';
+import { View, StyleSheet, SafeAreaView, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ChapterList from '../components/ChapterList';
 import QuranReaderScreen from './QuranReaderScreen';
@@ -8,7 +9,8 @@ import { colors } from '../theme/colors';
 
 const MainScreen = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
-  const sidebarWidth = sidebarVisible ? '30%' : 0;
+  // Increased width percentage to accommodate longer chapter names
+  const sidebarWidth = sidebarVisible ? '45%' : 0;
 
   return (
     <QuranProvider>

@@ -1,5 +1,6 @@
+// src/components/ChapterList.tsx
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useQuran } from '../context/QuranContext';
 import { Chapter } from '../types';
 import { colors } from '../theme/colors';
@@ -21,12 +22,12 @@ const ChapterList = () => {
         <View style={styles.chapterNumberContainer}>
           <Text style={styles.chapterNumber}>{item.id}</Text>
         </View>
-        <View style={styles.chapterNameContainer}>
-          <Text style={styles.chapterName}>{item.name}</Text>
-          <Text style={styles.arabicName}>{item.arabicName}</Text>
-          <View style={styles.versesCountContainer}>
-            <Text style={styles.versesCount}>{item.versesCount} verses</Text>
+        <View style={styles.chapterDetailsContainer}>
+          <View style={styles.chapterNameWrapper}>
+            <Text style={styles.chapterName} numberOfLines={1}>{item.name}</Text>
           </View>
+          <Text style={styles.arabicName}>{item.arabicName}</Text>
+          <Text style={styles.versesCount}>{item.versesCount} verses</Text>
         </View>
       </TouchableOpacity>
     );
@@ -75,7 +76,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    alignItems: 'center',
   },
   selectedChapterItem: {
     backgroundColor: colors.highlight,
@@ -90,19 +90,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    flexShrink: 0,
   },
   chapterNumber: {
     fontSize: 14,
     fontWeight: 'bold',
     color: colors.primary,
   },
-  chapterNameContainer: {
+  chapterDetailsContainer: {
     flex: 1,
+    minWidth: 0, // This is important to allow proper text truncation
+  },
+  chapterNameWrapper: {
+    width: '100%',
   },
   chapterName: {
     fontSize: 16,
     fontWeight: '500',
     color: colors.text,
+    flexShrink: 1,
   },
   arabicName: {
     fontSize: 18,
@@ -111,11 +117,9 @@ const styles = StyleSheet.create({
     fontFamily: 'System',
     textAlign: 'right',
   },
-  versesCountContainer: {
-    marginTop: 4,
-  },
   versesCount: {
     fontSize: 12,
+    marginTop: 4,
     color: colors.textSecondary,
   },
 });
